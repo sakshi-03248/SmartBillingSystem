@@ -1,0 +1,136 @@
+import java.util.*;
+
+class Product {
+    int id;
+    String name;
+    double price;
+
+    Product(int id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+}
+
+class CartItem {
+    Product product;
+    int quantity;
+
+    CartItem(Product product, int quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    double getTotal() {
+        return product.price * quantity;
+    }
+}
+
+public class SmartBillingSystem {
+    static Scanner scanner = new Scanner(System.in);
+    static List<Product> productList = new ArrayList<>();
+    static List<CartItem> cart = new ArrayList<>();
+
+    public static void main(String[] args) {
+        initializeProducts();
+        System.out.println("=== SMART BILLING SYSTEM ===");
+
+        boolean running = true;
+        while (running) {
+            System.out.println("\n1. Show Products");
+            System.out.println("2. Add to Cart");
+            System.out.println("3. Show Cart");
+            System.out.println("4. Generate Bill");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    showProducts();
+                    break;
+                case 2:
+                    addToCart();
+                    break;
+                case 3:
+                    showCart();
+                    break;
+                case 4:
+                    generateBill();
+                    break;
+                case 5:
+                    running = false;
+                    System.out.println("Thank you for using Smart Billing System.");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    static void initializeProducts() {
+        productList.add(new Product(1, "Milk", 25.0));
+        productList.add(new Product(2, "Bread", 20.0));
+        productList.add(new Product(3, "Eggs", 6.0));
+        productList.add(new Product(4, "Soap", 30.0));
+    }
+
+    static void showProducts() {
+        System.out.println("\nAvailable Products:");
+        for (Product p : productList) {
+            System.out.printf("ID: %d | Name: %s | Price: Rs. %.2f\n", p.id, p.name, p.price);
+        }
+    }
+
+    static void addToCart() {
+        System.out.print("Enter product ID to add: ");
+        int id = scanner.nextInt();
+        Product selected = null;
+
+        for (Product p : productList) {
+            if (p.id == id) {
+                selected = p;
+                break;
+            }
+        }
+
+        if (selected != null) {
+            System.out.print("Enter quantity: ");
+            int quantity = scanner.nextInt();
+            cart.add(new CartItem(selected, quantity));
+            System.out.println("Added to cart.");
+        } else {
+            System.out.println("Product not found.");
+        }
+    }
+
+    static void showCart() {
+        if (cart.isEmpty()) {
+            System.out.println("Cart is empty.");
+            return;
+        }
+
+        System.out.println("\nItems in Cart:");
+        for (CartItem item : cart) {
+            System.out.printf("%s x %d = Rs. %.2f\n", item.product.name, item.quantity, item.getTotal());
+        }
+    }
+
+    static void generateBill() {
+        if (cart.isEmpty()) {
+            System.out.println("Cart is empty.");
+            return;
+        }
+
+        double grandTotal = 0;
+        System.out.println("\n=== BILL ===");
+        for (CartItem item : cart) {
+            double total = item.getTotal();
+            grandTotal += total;
+            System.out.printf("%s x %d = Rs. %.2f\n", item.product.name, item.quantity, total);
+        }
+
+        System.out.printf("Total Amount: Rs. %.2f\n", grandTotal);
+        cart.clear(); // Clear the cart after billing
+    }
+}
